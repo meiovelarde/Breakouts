@@ -1,7 +1,8 @@
 #pragma once
 
 #include "cocos2d.h"
-#include "SimpleAudioEngine.h"  
+#include "SimpleAudioEngine.h"
+#include "Brick.h"
 #include <map>
 using namespace std;
 
@@ -23,6 +24,7 @@ private:
 	cocos2d::Sprite* wallTops;
 	cocos2d::Sprite* paddle;
 	cocos2d::Sprite* ball;
+	std::vector<Brick*> bricks;
 	static std::map<cocos2d::EventKeyboard::KeyCode,
 		std::chrono::high_resolution_clock::time_point> keys;
 	cocos2d::Label * label;

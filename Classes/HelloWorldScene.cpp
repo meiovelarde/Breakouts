@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include "math.h"
 #include "stdlib.h"
+#include "Brick.h"
 USING_NS_CC;
 using namespace std;
 
@@ -50,7 +51,7 @@ bool HelloWorld::init()
 	ball->setPosition(Vec2(visibleSize.width / 2 - origin.x,
 		visibleSize.height / 6 - origin.y - (2.8*ball->getContentSize().height)));
 	updateXY();
-
+	bricks.push_back(new Brick(this, Vec2(ball->getPosition().x, ball->getPosition().y + 50)));
 	wall = CCSprite::create("wall.png");
 	wall->setPosition(Vec2(0, 0));
 	wall->setAnchorPoint(Vec2(0, 0));
