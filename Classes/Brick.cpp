@@ -25,7 +25,6 @@ Brick::Brick(cocos2d::Layer *layer, cocos2d::Vec2 position) {
 	layer->addChild(wallBot, 20);
 	layer->addChild(wallLeft, 20);
 	layer->addChild(wallRight, 20);
-
 }
 
 Brick::~Brick() {
@@ -34,6 +33,24 @@ Brick::~Brick() {
 	wallLeft->removeFromParentAndCleanup(true);
 	wallRight->removeFromParentAndCleanup(true);
 	body->removeFromParentAndCleanup(true);
+}
+
+
+int Brick::checkWallsHit(cocos2d::Rect ball) {
+	auto top = wallTop->getBoundingBox();
+	auto bot = wallBot->getBoundingBox();
+	auto left = wallLeft->getBoundingBox();
+	auto right = wallRight->getBoundingBox();
+	if (ball.intersectsRect(right))
+		return 0;
+	if (ball.intersectsRect(left))
+		return 1;
+	if (ball.intersectsRect(top))
+		return 2;
+	if (ball.intersectsRect(bot))
+		return 3;
+	
+	return 4;
 }
 
 

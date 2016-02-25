@@ -15,6 +15,7 @@ public:
 	CREATE_FUNC(HelloWorld);
 	void restart(float);
 	bool isKeyPressed(cocos2d::EventKeyboard::KeyCode);
+	std::wstring s2ws(const std::string& s);
 
 private:
 	float gamespeed;
@@ -38,5 +39,7 @@ private:
 	int dir;
 	int HelloWorld::checkWallHit();
 	void HelloWorld::checkBallHit();
+	void HelloWorld::paddleCD(float);
 	void updateXY();
+	boolean canHit;
 };
