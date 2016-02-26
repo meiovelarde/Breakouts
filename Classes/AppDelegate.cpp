@@ -24,7 +24,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	//auto scene = HelloWorld::createScene();
 	//auto scene = MenuScene::createScene();
 	//auto scene = IntroScene::createScene();
-	auto scene = HelloWorld::createScene();
+	auto scene = SplashScene::createScene();
 	director->runWithScene(scene);
 	return true;
 }

@@ -22,23 +22,33 @@ bool MenuScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
-	audio->playBackgroundMusic("ddune.mp3", true);
+	audio->playBackgroundMusic("pinball.wav", true);
 	selecting = true;
+
+	auto bg = cocos2d::LayerColor::create(Color4B(146, 174, 38, 255));
+	this->addChild(bg);
+	
+	auto wall = cocos2d::CCSprite::create("wall.png");
+	wall->setPosition(Vec2(0, 0));
+	wall->setAnchorPoint(Vec2(0, 0));
+	this->addChild(wall);
 	
 	startLabel = Label::createWithSystemFont("Start", "Minecraft", 32);
-	startLabel->setColor(ccc3(132, 174, 174));
+	startLabel->setColor(ccc3(100, 119, 30));
 	startLabel->setPosition(Vec2((visibleSize.width / 2 + 16), visibleSize.height / 3.5));
 	
 
 	exitLabel = Label::createWithSystemFont("Exit", "Minecraft", 32);
-	exitLabel->setColor(ccc3(60, 38, 15));
+	exitLabel->setColor(ccc3(76, 81, 19));
 	exitLabel->setPosition(Vec2((visibleSize.width / 2 + 16), visibleSize.height / 3.5 - (startLabel->getContentSize().height * 1.5)));
 
+	logo = CCSprite::create("logo.png");
+	logo->setPosition(Vec2(visibleSize.width / 2 + logo->getContentSize().width*.030,
+		visibleSize.height / 2 + logo->getContentSize().height));
 	
 	this->addChild(startLabel, 36);
 	this->addChild(exitLabel, 36);
-
-	this->schedule(bgduler, 0.05f);
+	this->addChild(logo);
 
 	selected = 0;
 	auto eventListener = EventListenerKeyboard::create();
@@ -69,7 +79,6 @@ void MenuScene::menuCommand(EventKeyboard::KeyCode code) {
 		selecting = false;
 		auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 		audio->playEffect("menu3.wav", false);
-		unschedule(bgduler);
 		
 		if (selected) {
 			this->schedule(schedule_selector(MenuScene::exitGame), 1.5);
@@ -88,13 +97,13 @@ void MenuScene::sel() {
 
 	if (selected) {
 		selected = 0;
-		startLabel->setColor(ccc3(132, 174, 174));
-		exitLabel->setColor(ccc3(0, 0, 0));
+		startLabel->setColor(ccc3(100, 119, 30));
+		exitLabel->setColor(ccc3(76, 81, 19));
 		
 	}
 	else {
-		exitLabel->setColor(ccc3(132, 174, 174));
-		startLabel->setColor(ccc3(0, 0, 0));
+		exitLabel->setColor(ccc3(100, 119, 30));
+		startLabel->setColor(ccc3(76, 81, 19));
 		selected = 1;
 		
 	}

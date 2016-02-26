@@ -1,6 +1,6 @@
 #include "SplashScene.h"
 #include "stdlib.h"
-#include "HelloWorldScene.h"
+#include "MenuScene.h"
 USING_NS_CC;
 using namespace std;
 
@@ -31,7 +31,7 @@ bool SplashScene::init()
 }
 
 void SplashScene::transitionWithDelay(float delta) {
-	auto scene = HelloWorld::createScene();
+	auto scene = MenuScene::createScene();
 	auto director = Director::getInstance();
 	director->replaceScene(scene);
 }

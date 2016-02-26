@@ -2,6 +2,7 @@
 #include "math.h"
 #include "stdlib.h"
 #include "Brick.h"
+#include "MenuScene.h"
 USING_NS_CC;
 using namespace std;
 
@@ -26,14 +27,17 @@ bool HelloWorld::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	angle = 45;
 	canHit = 1;
+	score = 0;
 	brekduler = schedule_selector(HelloWorld::update);
 	restarting = schedule_selector(HelloWorld::restart);
-	gamespeed = .05;
+	gamespeed = .035;
 	this->schedule(brekduler, gamespeed); 
 	auto eventListener = EventListenerKeyboard::create();
 
 	auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
 	audio->preloadEffect("beep.mp3");
+	audio->preloadEffect("win.wav");
+	audio->preloadEffect("dead2.wav");
 
 	eventListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
 		// If a key already exists, do nothing as it will already have a time stamp
@@ -66,10 +70,17 @@ bool HelloWorld::init()
 	wallLeft = Rect(0,0, 18, 475);
 	wallTop = wallTops->getBoundingBox();
 	wallRight = Rect(618, 0, 18, 475);
+
+	scoreLabel = Label::createWithSystemFont("", "Minecraft", 16);
+	scoreLabel->setString("Score: " + std::to_string(score));
+	scoreLabel->setColor(ccc3(71, 86, 19));
+	scoreLabel->setPosition(Vec2(visibleSize.width - 1.5*(scoreLabel->getContentSize().width), 12));
+	
+
 	this->addChild(wall);
 	this->addChild(ball);
 	this->addChild(paddle);
-
+	this->addChild(scoreLabel);
 	for (int j = 0; j <= 3; j++) {
 		for (int i = 0; i <= 6; i++) {
 			bricks.push_back(new Brick(this, Vec2(visibleSize.width / 2 + i*(46), wallTops->getPosition().y - 80 - j*(26))));
@@ -79,6 +90,7 @@ bool HelloWorld::init()
 		}
 	}
 	this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
+
 	return true;
 }
 
@@ -96,7 +108,7 @@ bool HelloWorld::isKeyPressed(EventKeyboard::KeyCode code) {
 }
 
 void HelloWorld::restart(float delta) {
-	auto newScene = HelloWorld::createScene(); 
+	auto newScene = MenuScene::createScene(); 
 	Director::getInstance()->replaceScene(newScene);
 }
 
@@ -144,6 +156,8 @@ void HelloWorld::checkBallHit() {
 				angle += 90;
 			delete bricks.at(i);
 			bricks.erase(bricks.begin() + i);
+			score += 10;
+			scoreLabel->setString("Score: " + std::to_string(score));
 			break;
 		case 1:
 			if (angle >= 0 && angle < 90 || angle >= 90 && angle < 180)
@@ -152,6 +166,8 @@ void HelloWorld::checkBallHit() {
 			OutputDebugString(L" Brick Hit Left ");
 			delete bricks.at(i);
 			bricks.erase(bricks.begin() + i);
+			score += 10;
+			scoreLabel->setString("Score: " + std::to_string(score));
 			break;
 		case 2:
 			OutputDebugString(L" Brick Hit Top ");
@@ -161,15 +177,16 @@ void HelloWorld::checkBallHit() {
 				angle = 180 - (360 - angle);
 			delete bricks.at(i);
 			bricks.erase(bricks.begin() + i);
+			score += 10;
+			scoreLabel->setString("Score: " + std::to_string(score));
 			break;
 		case 3:
 			OutputDebugString(L" Brick Hit Bot ");
-			if (angle >= 90 && angle < 180)
-				angle = 180 - angle;
-			else if (angle >= 0 && angle < 90)
-				angle = 360 - angle;
+			angle = 360 - angle;
 			delete bricks.at(i);
 			bricks.erase(bricks.begin() + i);
+			score += 10;
+			scoreLabel->setString("Score: " + std::to_string(score));
 			break;
 		case 4:
 			break;
@@ -316,9 +333,6 @@ void HelloWorld::checkBallHit() {
 	}
 
 	else if (ballBox.intersectsRect(wallTop)) {
-		if (angle>=90 && angle < 180)
-		angle = 180 + angle;
-		else if (angle >= 0 && angle < 90)
 		angle = 360 - angle;
 	}
 
@@ -364,7 +378,35 @@ void HelloWorld::update(float delta) {
 	if (angle < 0) angle += 360;
 	updateXY();
 	move();
+	checkEnd();
 
+}
+
+void HelloWorld::checkEnd() {
+	auto ballPos = ball->getPosition();
+	auto endLabel = Label::createWithSystemFont("", "Minecraft", 32);
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+	endLabel->setDimensions(200, 200);
+	endLabel->setColor(ccc3(71, 86, 19));
+	endLabel->setPosition(Vec2(visibleSize.width / 2 + 25, visibleSize.height / 3));
+	
+	if (ballPos.y < 0) {
+		this->unschedule(brekduler);
+		this->schedule(restarting, 3.0f);
+		endLabel->setString("You Lose!   Score: " + std::to_string(score));
+		auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+		audio->playEffect("dead2.wav", false, 1.0f, 1.0f, 0.005f);
+		this->addChild(endLabel);
+	}
+
+	if (bricks.empty()) {
+		this->unschedule(brekduler);
+		this->schedule(restarting, 5.0f);
+		endLabel->setString("You Win!   Score: " + std::to_string(score));
+		auto audio = CocosDenshion::SimpleAudioEngine::getInstance();
+		audio->playEffect("win.wav", false, 1.0f, 1.0f, 0.005f);
+		this->addChild(endLabel);
+	}
 }
 std::map<cocos2d::EventKeyboard::KeyCode,
 	std::chrono::high_resolution_clock::time_point> HelloWorld::keys;

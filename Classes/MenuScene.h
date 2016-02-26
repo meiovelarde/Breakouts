@@ -18,7 +18,6 @@ private:
 	cocos2d::Sprite* logo;
 	cocos2d::Label* startLabel;
 	cocos2d::Label* exitLabel;
-	cocos2d::SEL_SCHEDULE bgduler;
 	int selected;
 	boolean selecting;
 };

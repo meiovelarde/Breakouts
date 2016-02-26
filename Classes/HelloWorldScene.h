@@ -28,10 +28,12 @@ private:
 	std::vector<Brick*> bricks;
 	static std::map<cocos2d::EventKeyboard::KeyCode,
 		std::chrono::high_resolution_clock::time_point> keys;
-	cocos2d::Label * label;
+	cocos2d::Label * scoreLabel;
+	int score;
 	cocos2d::Rect wallLeft;
 	cocos2d::Rect wallTop;
 	cocos2d::Rect wallRight;
+	void checkEnd();
 	float bmX;
 	float bmY;
 	float angle;
